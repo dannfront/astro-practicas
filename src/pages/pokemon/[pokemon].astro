@@ -1,0 +1,38 @@
+---
+import type { PokemonsInterfaces } from "../../interfaces/pokemos.interface";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+export async function getStaticPaths() {
+    const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+    const { results } = (await res.json()) as PokemonsInterfaces;
+    const paramsAndProps = results.map((pokemon) => ({
+        params: { pokemon: pokemon.name },
+        props: { name: pokemon.name, url: pokemon.url },
+    }));
+
+    return paramsAndProps;
+}
+
+const { pokemon } = Astro.params;
+const { url } = Astro.props;
+const idPokemon = url.split("/").at(-2);
+const urlSong = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${idPokemon}.ogg`;
+---
+
+<MainLayout
+    title=`pokemon | ${pokemon}`
+    image=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${idPokemon}.png`
+    description=`informacion del pokemon ${pokemon}`
+>
+    <div class="text-center mt-10">
+        <h1 class="text-3xl">{pokemon}</h1>
+        <img
+            class="mx-auto w-[300px] mt-5"
+            src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${idPokemon}.png`
+            alt={pokemon}
+        />
+        <audio controls class="mt-5 mx-auto">
+            <source src={urlSong} />
+        </audio>
+    </div>
+</MainLayout>

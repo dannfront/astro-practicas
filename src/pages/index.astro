@@ -1,0 +1,24 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import type { PokemonsInterfaces } from "../interfaces/pokemos.interface";
+import CardPokemon from "../components/pokemons/CardPokemon.astro";
+const URL = "https://pokeapi.co/api/v2/pokemon";
+const titlePage = "Pokemon | Home";
+
+const res = await fetch(URL);
+const data = (await res.json()) as PokemonsInterfaces;
+---
+
+<MainLayout title={titlePage}>
+    <h1 class="text-3xl">Pokemons</h1>
+
+    <article
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
+    >
+        {
+            data.results.map((pokemon, i) => (
+                <CardPokemon isBig name={pokemon.name} url={pokemon.url} />
+            ))
+        }
+    </article>
+</MainLayout>

@@ -1,0 +1,55 @@
+---
+import type { GetStaticPaths } from "astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import type { PokemonsInterfaces } from "../../interfaces/pokemos.interface";
+import CardPokemon from "../../components/pokemons/CardPokemon.astro";
+
+const URL = "https://pokeapi.co/api/v2/pokemon";
+const titlePage = "Pokemon | Home";
+
+export const getStaticPaths = (async ({ paginate }) => {
+    const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+    const { results } = (await res.json()) as PokemonsInterfaces;
+    return paginate(results, { pageSize: 12 });
+}) satisfies GetStaticPaths;
+
+// const res = await fetch(URL);
+// const data = (await res.json()) as PokemonsInterfaces;
+
+const { page } = Astro.props;
+
+console.log(page.url.next?.split("2").at(1));
+const nextPage = page.url.next;
+const prevPage = page.url.prev;
+const currentPage = page.currentPage;
+---
+
+<MainLayout title={titlePage}>
+    <h1 class="text-3xl">Pokemons</h1>
+
+    <article
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5"
+    >
+        {
+            page.data.map((pokemon, i) => (
+                <CardPokemon isBig name={pokemon.name} url={pokemon.url} />
+            ))
+        }
+    </article>
+
+    <section class="flex justify-between mt-5">
+        <a class:list={["btn"]} href={prevPage}
+            >page {prevPage?.split("/").at(2)}</a
+        >
+        <span>{currentPage}</span>
+        <a class:list={["btn", { disabled: nextPage }]} href={nextPage}
+            >page {nextPage?.split("/").at(2)}</a
+        >
+    </section>
+</MainLayout>
+
+<style>
+    .btn {
+        @apply bg-blue-500 p-2 text-white rounded-lg;
+    }
+</style>

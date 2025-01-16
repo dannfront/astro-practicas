@@ -1,0 +1,22 @@
+---
+interface Props {
+    name: string;
+    url: string;
+    isBig?: Boolean;
+}
+
+const { name, url, isBig = false } = Astro.props;
+const numberOfPokemon = url.split("/").at(-2);
+---
+
+<section class="text-center border rounded-xl p-2">
+    <a href=`/pokemon/${name}`>
+        <img
+            transition:name=`${name}-pokemon`
+            class=`${isBig?"w-26 h-26":"w-16 h-16"}`
+            src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${numberOfPokemon}.png`
+            alt={name}
+        />
+        <span>{name}</span>
+    </a>
+</section>

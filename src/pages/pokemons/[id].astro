@@ -1,0 +1,23 @@
+<!-- ---
+import type { GetStaticPaths } from "astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import type { PokemonsInterfaces } from "../../interfaces/pokemos.interface";
+
+export const getStaticPaths = (async () => {
+    const URL = "https://pokeapi.co/api/v2/pokemon";
+
+    const res = await fetch(URL);
+    const { results } = (await res.json()) as PokemonsInterfaces;
+
+    return results.map(({ name, url }, id) => ({
+        params: { id: id + 1 },
+        props: { name, url },
+    }));
+}) satisfies GetStaticPaths;
+
+const { name, url } = Astro.props;
+---
+
+<MainLayout title={name}>
+    <h1>{name}</h1>
+</MainLayout> -->
